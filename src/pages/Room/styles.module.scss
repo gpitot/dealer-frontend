@@ -1,0 +1,52 @@
+
+
+html, body {
+  padding:0;
+  margin:0;
+}
+
+body {
+  background:green;
+}
+
+.container {
+  padding:20px;
+  img {
+    box-sizing: border-box;
+    display:block;
+    max-width:200px;
+    padding:10px;
+  }
+
+  button {
+    position:absolute;
+    top:0;
+    right:0;
+    padding:10px;
+    font-size:2rem;
+    background:#eee;
+    margin:5px;
+    border:none;
+    outline:none;
+  }
+
+
+  .board {
+    display: flex;
+    min-height:150px;
+    img {
+      width: 20%;
+      align-self:center;
+      padding:5px;
+    }
+  }
+
+  .hand {
+    display: flex;
+
+    img {
+      width: 50%;
+      
+    }
+  }
+}
