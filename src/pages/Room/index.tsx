@@ -3,16 +3,18 @@ import io from "socket.io-client";
 import style from "./styles.module.scss";
 import Card from "../../components/Card";
 
-const ENDPOINT = "https://dealer-backend.herokuapp.com/";
+//const ENDPOINT = "https://dealer-backend.herokuapp.com/";
+const ENDPOINT = "http://localhost:3000";
 
 const Loading = () => <h1>joining room</h1>;
 
 const Room = () => {
   const [socket, setSocket] = useState<any>(null);
-
+  const [showOdds, setShowOdds] = useState<boolean>(false);
   const [game, updateGame] = useState<any>({
     inGame: false,
     centerCards: [],
+    odds: [],
   });
   const gameRef = useRef(game);
 
@@ -30,16 +32,27 @@ const Room = () => {
     socket.on("playerJoined", updateGameState);
     socket.on("playerLeft", updateGameState);
 
-    socket.on("deal", updateGameState);
-
-    socket.on("clearTable", () => {
-      updateGame({
+    socket.on("reset", () => {
+      console.log("reset ");
+      updateGameState({
         host: gameRef.current.host,
         numPlayers: gameRef.current.numPlayers,
         centerCards: [],
+        odds: [],
         cards: [],
         inGame: false,
       });
+    });
+
+    socket.on("deal", updateGameState);
+
+    socket.on("odds", ({ odds }: { odds: string }) => {
+      const oddsList = [...gameRef.current.odds, odds];
+      updateGameState({ odds: oddsList });
+    });
+
+    socket.on("showOdds", () => {
+      setShowOdds(true);
     });
 
     socket.on("center-pile", updateGameState);
@@ -60,11 +73,11 @@ const Room = () => {
   };
 
   const updateGameState = (newData: any) => {
-    if (newData.centerCards) {
+    if (newData.centerCards && newData.centerCards.length > 0) {
       newData.centerCards.unshift(...gameRef.current.centerCards);
     }
 
-    console.log({
+    console.log("next state = ", {
       ...gameRef.current,
       ...newData,
     });
@@ -87,6 +100,8 @@ const Room = () => {
       </div>
     );
 
+  console.log(game);
+
   return (
     <div className={style.container}>
       <h5>{game.numPlayers} people playing</h5>
@@ -102,6 +117,16 @@ const Room = () => {
           <Card card={card} isFlippable />
         ))}
       </div>
+      {showOdds && (
+        <div>
+          <ul>
+            {game.odds.map((odd: string) => (
+              <li>{odd}%</li>
+            ))}
+          </ul>
+        </div>
+      )}
+
       {game.host && <button onClick={nextCard}>Next</button>}
     </div>
   );
