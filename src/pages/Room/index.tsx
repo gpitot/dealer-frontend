@@ -3,7 +3,7 @@ import io from "socket.io-client";
 import style from "./styles.module.scss";
 import Card from "../../components/Card";
 
-const ENDPOINT = "http://localhost:3000";
+const ENDPOINT = "https://dealer-backend.herokuapp.com/";
 
 const Loading = () => <h1>joining room</h1>;
 
